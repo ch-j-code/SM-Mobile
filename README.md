@@ -2,6 +2,17 @@
 
 SM Mobile is a standalone Android and iOS edition of CH-J Server Manager, built with Flutter and Dart. It connects directly to servers over SSH and SFTP, without an account, cloud service, or telemetry. The project is currently a development alpha (0.0.1). The desktop application is not a dependency.
 
+## Download alpha
+
+| Platform / artifact | Download | Installation |
+| --- | --- | --- |
+| Android 11+ | [Download APK](https://www.sm.ch-j.cz/download.php?id=1d5620956f34130e1e1d67d8&edition=mobile&lang=cs) | Direct installation; signed alpha package |
+| iOS/iPadOS 15+ | [Download unsigned IPA](https://www.sm.ch-j.cz/download.php?id=75cd6f6c91f9244da4e116da&edition=mobile&lang=cs) | Requires your own Apple signing and provisioning |
+| Android distribution tools | [Download AAB](https://www.sm.ch-j.cz/download.php?id=d71915fa77047540b2fa2c52&edition=mobile&lang=cs) | Cannot be installed directly on a phone |
+| iOS simulator on Apple Silicon Mac | [Download simulator ZIP](https://www.sm.ch-j.cz/download.php?id=3d6da43cbef7dbf8c22d5b25&edition=mobile&lang=cs) | Simulator only; cannot be installed on iPhone or iPad |
+
+**Development alpha:** back up important data before testing. See the [official mobile download page](https://www.sm.ch-j.cz/cs/?edition=mobile) for current build details and checksums.
+
 ## Development status and downloads
 
 SM Mobile is an actively developed **alpha**, version `0.0.1`. The official catalog checked on **October 16, 2026** lists build `sm-mobile-20261016T050549Z-3678f2a05fa9`. It is available for testing; production readiness and physical-device validation remain incomplete. Use the [official mobile download page](https://www.sm.ch-j.cz/cs/?edition=mobile) for current packages, build IDs, SHA-512 values and Android signing-certificate details.
