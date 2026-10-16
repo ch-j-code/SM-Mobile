@@ -28,22 +28,23 @@ A signed Android release package is still an alpha product. Test on non-producti
 
 ## Platforms and implemented features
 
-The project targets **Android 11+ (API 30+)** and **iOS/iPadOS 15+**, with phone and tablet layouts. Compact screens use bottom navigation; displays at least 720 logical pixels wide use a navigation sidebar. The iOS project enables both iPhone and iPad device families. Physical iPad validation remains outstanding.
+The project targets **Android 11+ (API 30+)** and **iOS/iPadOS 15+**, with phone and tablet layouts. *In development (not yet published):* one adaptive layout for phones, tablets, split-screen windows and foldables. It follows the window's available size in logical pixels, never a device model: windows narrower than 600 logical pixels use bottom navigation, wider windows and short landscape windows use a navigation rail, and from 840 logical pixels the server list stays beside the selected tool. A half-folded fold or a hinge reported by the system splits the content on either side of it. Rotation, resizing and folding keep the SSH session, terminal, SFTP directory and unsaved input. The iOS project enables both iPhone and iPad device families. Physical iPad, foldable and iPhone Duo validation remains outstanding.
 
 Implemented in the current Flutter / Dart application:
 
 - Direct SSH access with password or private-key authentication, SHA-256 host-key verification and one active connection.
 - An interactive PTY terminal with CTRL, ALT, ESC, TAB and arrow controls.
 - SFTP browsing, upload/download, rename, directory creation and confirmed deletion, with transfer cancellation and no overwrite of existing destinations.
-- An AES-256-GCM encrypted local Vault, master-password unlock, optional OS-protected biometric/device-credential unlock and automatic locking that disconnects SSH.
+- *In development (0.0.3, not yet published):* a code and text editor (Re-Editor with Re-Highlight grammars) for remote files over SFTP and for files on the device (iOS/iPadOS Files and file providers, Android Storage Access Framework). It keeps encoding (UTF-8, UTF-8 BOM, UTF-16 LE/BE, Windows-1250/1252, ISO-8859-1/2), line endings and the final newline; detects changes made elsewhere before saving; saves remote files through a temporary file and an atomic rename while keeping permissions; offers find/replace with case and regular expressions, go to line, folding, JSON/YAML/XML validation and recent/favorite files. Images, safe SVG, archives (listing only), certificates (basic information only), notebooks and a hex view are shown in the app; PDF, office documents and media open in the system viewer.
+- An AES-256-GCM encrypted local Vault, master-password unlock, optional OS-protected biometric unlock and automatic locking that disconnects SSH. *In 0.0.3:* master password of 4–64 characters with a strength indicator, password change (with a new data key), Argon2id key derivation, biometric unlock that starts automatically and never falls back to the device passcode.
 - Desktop-compatible version 1 JSON profile import/export without credentials or trusted host keys.
-- Foreground Linux monitoring for CPU, RAM, root filesystem usage, uptime, load and SSH command response time.
-- IPv4/IPv6 DNS lookup and TCP connection checks, plus information about the active SSH connection.
+- Foreground Linux monitoring for CPU, RAM, root filesystem usage, uptime, load and SSH command response time, with readable units and load gauges.
+- IPv4/IPv6 DNS lookup and TCP connection checks in the published 0.0.1. *In development (0.0.2/0.0.3, not yet published):* on-device network diagnostics with real ICMP / ICMPv6 echo ping (count, interval, timeout, payload size; per-packet RTT, min/avg/max and loss), real traceroute with TTL / hop limit (three probes per hop, up to 30 hops by default, `*` for no reply), and TCP connect with DNS lookup. Automatic, IPv4 or IPv6, cancellable at any time, without root, a server or a cloud service. *In 0.0.3:* TCP connect ping and ICMP ping with presets or continuous runs, IPv4 + IPv6 measured side by side, per-attempt log, statistics (median, standard deviation, jitter, P95), RTT chart and TXT/CSV/JSON export; ICMP ping with TTL/hop limit and Don't Fragment; traceroute over ICMP, UDP and TCP (TCP on iOS/iPadOS only), repetitions, reverse DNS and comparison with the previous run.
 - Czech, German and English interfaces, with light, dark and system themes.
 
 ### Current limits and validation
 
-There is one active SSH connection. SFTP uses POSIX paths, refuses symlink traversal and existing destination files, and deletes directories non-recursively. There is no remote text editor, CSV import, ICMP/traceroute, desktop plugin system, local Hash & Checksum tool, automatic updater or persistent background monitoring. Changed trusted host keys block connection; there is currently no UI for rotating or removing them.
+There is one active SSH connection. SFTP uses POSIX paths, refuses symlink traversal and existing destination files, and deletes directories non-recursively. Release 0.0.1 has no text editor; 0.0.3 adds one (not yet published). There is no CSV import, desktop plugin system, local Hash & Checksum tool, automatic updater or persistent background monitoring. Changed trusted host keys block connection; there is currently no UI for rotating or removing them.
 
 The [recorded test results](https://www.sm.ch-j.cz/cs/source/?edition=mobile&path=docs%2FTESTING.md) cover automated tests, local OpenSSH and Linux integration, an Android emulator and an iPhone simulator. They do not establish physical-device biometric behavior, iPad operation, mobile-network IPv6, large real-device transfers or a complete accessibility audit. These areas still require validation.
 
@@ -102,13 +103,13 @@ For VS Code, install the Dart and Flutter extensions, open `SM Mobile.code-works
 ## Using the application
 
 1. Choose a language, read the security recommendations and the full CH-J license version 1.14, and explicitly accept the license.
-2. Create a Vault with a master password of 12–128 characters. This password cannot be recovered. You can enable biometric authentication or the device passcode later in Settings.
+2. Create a Vault with a master password (12–128 characters in 0.0.1; 4–64 characters in 0.0.3). This password cannot be recovered. You can enable biometric unlock later in Settings.
 3. Add a server. Hostnames are stored as entered; DNS results are never written back to profiles. IPv6 addresses can also be entered in square brackets.
 4. Select a server and connect using a password or a securely stored private key. Private key passphrases are requested when connecting and are not stored.
 5. Verify the SSH host key fingerprint through an independent channel before accepting it for the first time. A change to a known host key blocks the connection.
 6. Use the terminal with a real PTY shell. CTRL and ALT apply to the next input only; ESC, TAB, and arrow keys are available on the scrollable toolbar.
 7. Use Files to browse over SFTP, upload files, download through the system share/save interface, rename items, create directories, and delete items after confirmation. Directory deletion is non-recursive. Existing destination files are not overwritten; choose a different name.
-8. Open Monitor to collect Linux metrics while that screen is visible and the application is in the foreground. Diagnostics provides IPv4/IPv6 DNS and TCP checks, plus details of the active SSH connection. TCP checks are not ICMP ping.
+8. Open Monitor to collect Linux metrics while that screen is visible and the application is in the foreground. Diagnostics offers IPv4/IPv6 DNS and TCP checks (0.0.1); the development versions add ping and traceroute over IPv4 or IPv6, run from the device itself, plus details of the active SSH connection. TCP connect is not an ICMP ping; ping and traceroute use real ICMP / ICMPv6 through the operating system's unprivileged ICMP sockets.
 
 On phones, Servers, Terminal, and Files appear in the bottom navigation bar; the last item opens Monitor, Diagnostics, and Settings. Wider displays use a scrollable navigation sidebar. Settings offers Czech, German, and English, along with light, dark, and system themes.
 
@@ -232,7 +233,7 @@ The following documents are available in the official mobile source browser and 
 
 ## Security, backups and license
 
-Vault encryption uses AES-256-GCM with a random data key, wrapped using a key derived from the master password through PBKDF2-HMAC-SHA256 (600,000 iterations). OS secure storage protects the encrypted envelope; optional quick unlock stores its data key separately under OS authentication controls. Private-key passphrases are not saved. Locking disconnects SSH and clears the terminal buffer. Physical-device biometric validation remains outstanding; see the [security model and limits](https://www.sm.ch-j.cz/cs/source/?edition=mobile&path=docs%2FSECURITY.md).
+Vault encryption uses AES-256-GCM with a random data key, wrapped using a key derived from the master password through PBKDF2-HMAC-SHA256 (600,000 iterations); 0.0.3 uses Argon2id (64 MiB, 3 iterations) for new and changed passwords and upgrades existing Vaults after the next unlock. OS secure storage protects the encrypted envelope; optional quick unlock stores its data key separately under OS authentication controls. Private-key passphrases are not saved. Locking disconnects SSH and clears the terminal buffer. Physical-device biometric validation remains outstanding; see the [security model and limits](https://www.sm.ch-j.cz/cs/source/?edition=mobile&path=docs%2FSECURITY.md).
 
 Verify the first SSH host-key fingerprint through an independent channel. A changed known key blocks the connection before authentication. The master password cannot be recovered. JSON profile export is not a backup of credentials, private keys, trusted host keys or remote data. Prepare and test appropriate backups before risky operations; the application does not guarantee backup existence or recoverability.
 
