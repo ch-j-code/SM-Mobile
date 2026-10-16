@@ -2,6 +2,40 @@
 
 SM Mobile is a standalone Android and iOS edition of CH-J Server Manager, built with Flutter and Dart. It connects directly to servers over SSH and SFTP, without an account, cloud service, or telemetry. The project is currently a development alpha (0.0.1). The desktop application is not a dependency.
 
+## Development status and downloads
+
+SM Mobile is an actively developed **alpha**, version `0.0.1`. The official catalog checked on **October 16, 2026** lists build `sm-mobile-20261016T050549Z-3678f2a05fa9`. It is available for testing; production readiness and physical-device validation remain incomplete. Use the [official mobile download page](https://www.sm.ch-j.cz/cs/?edition=mobile) for current packages, build IDs, SHA-512 values and Android signing-certificate details.
+
+| Artifact on the official website | Purpose and installation status |
+| --- | --- |
+| Signed Android release APK | Direct installation on Android 11+; allow installation from the browser if Android requests it |
+| Android release AAB | Distribution tooling; cannot be installed directly on a phone |
+| Unsigned iOS IPA (`arm64`) | Requires your own Apple signing and provisioning; not directly installable from the website |
+| iOS simulator application ZIP (`arm64`) | Apple Silicon Mac simulator; cannot be installed on iPhone or iPad |
+
+A signed Android release package is still an alpha product. Test on non-production servers and prepare appropriate backups.
+
+## Platforms and implemented features
+
+The project targets **Android 11+ (API 30+)** and **iOS/iPadOS 15+**, with phone and tablet layouts. Compact screens use bottom navigation; displays at least 720 logical pixels wide use a navigation sidebar. The iOS project enables both iPhone and iPad device families. Physical iPad validation remains outstanding.
+
+Implemented in the current Flutter / Dart application:
+
+- Direct SSH access with password or private-key authentication, SHA-256 host-key verification and one active connection.
+- An interactive PTY terminal with CTRL, ALT, ESC, TAB and arrow controls.
+- SFTP browsing, upload/download, rename, directory creation and confirmed deletion, with transfer cancellation and no overwrite of existing destinations.
+- An AES-256-GCM encrypted local Vault, master-password unlock, optional OS-protected biometric/device-credential unlock and automatic locking that disconnects SSH.
+- Desktop-compatible version 1 JSON profile import/export without credentials or trusted host keys.
+- Foreground Linux monitoring for CPU, RAM, root filesystem usage, uptime, load and SSH command response time.
+- IPv4/IPv6 DNS lookup and TCP connection checks, plus information about the active SSH connection.
+- Czech, German and English interfaces, with light, dark and system themes.
+
+### Current limits and validation
+
+There is one active SSH connection. SFTP uses POSIX paths, refuses symlink traversal and existing destination files, and deletes directories non-recursively. There is no remote text editor, CSV import, ICMP/traceroute, desktop plugin system, local Hash & Checksum tool, automatic updater or persistent background monitoring. Changed trusted host keys block connection; there is currently no UI for rotating or removing them.
+
+The [recorded test results](https://www.sm.ch-j.cz/cs/source/?edition=mobile&path=docs%2FTESTING.md) cover automated tests, local OpenSSH and Linux integration, an Android emulator and an iPhone simulator. They do not establish physical-device biometric behavior, iPad operation, mobile-network IPv6, large real-device transfers or a complete accessibility audit. These areas still require validation.
+
 ## Official links and source code
 
 - [SM Mobile — official website](https://www.sm.ch-j.cz/cs/?edition=mobile)
@@ -11,9 +45,21 @@ SM Mobile is a standalone Android and iOS edition of CH-J Server Manager, built 
 
 This GitHub repository contains only this README. Application source code, source archives, documentation, and builds are published on the official website. To follow the development and build instructions below, download and extract the mobile source archive from the source browser, then open the extracted project directory.
 
-## Desktop application
+## CH-J Ecosystem — Desktop & Mobile
 
-CH-J Server Manager is the separate desktop application for Windows, macOS, and Linux. The mobile and desktop applications can each be used independently.
+CH-J Server Manager is the separate desktop application for Windows, macOS, and Linux. The mobile and desktop applications can each be used independently; neither requires the other.
+
+| | CH-J Server Manager | SM Mobile |
+| --- | --- | --- |
+| Platforms | Windows, macOS, Linux | Android, iOS/iPadOS; phones and tablets |
+| Technology | Electron / JavaScript | Flutter / Dart |
+| Server access | Multiple SSH sessions, terminal, SFTP and Monaco editing | One SSH connection, PTY terminal, SFTP browsing and transfers |
+| Tools | Extended diagnostics, local hashing and first-party management plugins | Foreground Linux monitoring, DNS/TCP diagnostics |
+| Profile exchange | Version 1 JSON and desktop CSV | Shared version 1 JSON only |
+| Status | Development alpha | Development alpha; see package restrictions above |
+| Project README | [Desktop README](https://github.com/ch-j-code/CH-J-Servermanager#readme) | [Mobile README](https://github.com/ch-j-code/SM-Mobile#readme) |
+
+Shared profile JSON carries only name, host, username and port. The applications use separate Vault formats; encrypted Vault files are not interchangeable.
 
 - [CH-J Server Manager — official website](https://www.sm.ch-j.cz/cs/)
 - [CH-J Server Manager — GitHub](https://github.com/ch-j-code/CH-J-Servermanager)
@@ -26,7 +72,7 @@ CH-J Server Manager is the separate desktop application for Windows, macOS, and 
 - For iOS development: macOS, Xcode, CocoaPods, and an iOS device or simulator.
 - Python 3 for the build and integration test scripts.
 
-The application supports Android 11 and later (API 30+), and iOS 15 and later on iPhone and iPad. Run `flutter doctor -v` to check your development environment before building.
+The configured minimum versions are Android 11 (API 30) and iOS/iPadOS 15; see the platform and validation limits above. Run `flutter doctor -v` to check your development environment before building.
 
 ## Getting started
 
@@ -173,11 +219,17 @@ The following documents are available in the official mobile source browser and 
 - [Test scenarios and results](https://www.sm.ch-j.cz/cs/source/?edition=mobile&path=docs%2FTESTING.md)
 - [Resolved components](https://www.sm.ch-j.cz/cs/source/?edition=mobile&path=docs%2FRESOLVED_COMPONENTS.md)
 
-## License
+## Security, backups and license
+
+Vault encryption uses AES-256-GCM with a random data key, wrapped using a key derived from the master password through PBKDF2-HMAC-SHA256 (600,000 iterations). OS secure storage protects the encrypted envelope; optional quick unlock stores its data key separately under OS authentication controls. Private-key passphrases are not saved. Locking disconnects SSH and clears the terminal buffer. Physical-device biometric validation remains outstanding; see the [security model and limits](https://www.sm.ch-j.cz/cs/source/?edition=mobile&path=docs%2FSECURITY.md).
+
+Verify the first SSH host-key fingerprint through an independent channel. A changed known key blocks the connection before authentication. The master password cannot be recovered. JSON profile export is not a backup of credentials, private keys, trusted host keys or remote data. Prepare and test appropriate backups before risky operations; the application does not guarantee backup existence or recoverability.
+
+The application displays the operational guidance and requires explicit license acceptance before first use and again for each new build. The guidance is informational and non-binding, is separate from the license, and does not require separate acceptance.
 
 This edition is licensed under the **CH-J Proprietary Software License 1.14**. See [LICENSE](https://www.sm.ch-j.cz/cs/source/?edition=mobile&path=LICENSE) for the full terms and [NOTICE](https://www.sm.ch-j.cz/cs/source/?edition=mobile&path=NOTICE) for distribution notices.
 
-Third-party components retain their own licenses. Full license texts are available in [Third-party notices](https://www.sm.ch-j.cz/cs/source/?edition=mobile&path=assets%2Flegal%2Fthird_party_notices.txt), with a component list in [Resolved components](https://www.sm.ch-j.cz/cs/source/?edition=mobile&path=docs%2FRESOLVED_COMPONENTS.md). They are also available in the application under Settings → Component licenses. The security recommendations are adapted from the CH-J desktop project in Czech, German, and English.
+Third-party components retain their own licenses. Full license texts are available in [Third-party notices](https://www.sm.ch-j.cz/cs/source/?edition=mobile&path=assets%2Flegal%2Fthird_party_notices.txt), with a component list in [Resolved components](https://www.sm.ch-j.cz/cs/source/?edition=mobile&path=docs%2FRESOLVED_COMPONENTS.md). They are also available in the application under Settings → Component licenses. The security recommendations are adapted from the CH-J desktop project in Czech, German, and English. The license remains in its original English; third-party rights and notices remain separate.
 
 ## Topics
 
