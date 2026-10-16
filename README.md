@@ -2,6 +2,23 @@
 
 SM Mobile is a standalone Android and iOS edition of CH-J Server Manager, built with Flutter and Dart. It connects directly to servers over SSH and SFTP, without an account, cloud service, or telemetry. The project is currently a development alpha (0.0.1). The desktop application is not a dependency.
 
+## Official links and source code
+
+- [SM Mobile — official website](https://www.sm.ch-j.cz/cs/?edition=mobile)
+- [SM Mobile — releases and downloads](https://www.sm.ch-j.cz/cs/releases/?edition=mobile)
+- [SM Mobile — source code browser and source archives](https://www.sm.ch-j.cz/cs/source/?edition=mobile)
+- [SM Mobile — GitHub](https://github.com/ch-j-code/SM-Mobile)
+
+This GitHub repository contains only this README. Application source code, source archives, documentation, and builds are published on the official website. To follow the development and build instructions below, download and extract the mobile source archive from the source browser, then open the extracted project directory.
+
+## Desktop application
+
+CH-J Server Manager is the separate desktop application for Windows, macOS, and Linux. The mobile and desktop applications can each be used independently.
+
+- [CH-J Server Manager — official website](https://www.sm.ch-j.cz/cs/)
+- [CH-J Server Manager — GitHub](https://github.com/ch-j-code/CH-J-Servermanager)
+- [CH-J Server Manager — desktop source code](https://www.sm.ch-j.cz/cs/source/)
+
 ## Requirements
 
 - Flutter with Dart compatible with the SDK constraint in `pubspec.yaml` (`>=3.10.0 <4.0.0`).
@@ -71,6 +88,19 @@ flutter build appbundle --debug
 flutter build ios --simulator
 ```
 
+### Website distribution
+
+```sh
+python3 tool/build.py distribution
+# Optional simulator build with the same build ID:
+flutter build ios --simulator --debug
+python3 tool/prepare_release.py
+```
+
+This target requires macOS, both toolchains, and `android/key.properties`. It creates a signed release APK and AAB plus an **unsigned** iOS device application, all with the same new build ID. An unsigned IPA made from that application requires your own Apple signing and provisioning before installation; it is not an installable Ad Hoc release. The AAB is for distribution tooling, not direct installation. Use the APK on Android.
+
+The website offers separate Desktop and Mobile editions and a source browser with the exact mobile build snapshot. Source archives exclude signing keys, password configuration, provisioning profiles, local SDK paths, caches and build outputs. Keep the Android release keystore and its password configuration backed up privately; future Android updates must use the same signing identity.
+
 ### Android release
 
 Create your own `android/key.properties` with `storeFile`, `storePassword`, `keyAlias`, and `keyPassword`, then run:
@@ -111,7 +141,7 @@ These are alternative invocations for the default test runner, an iOS simulator,
 
 The script creates temporary keys in a private directory, starts a server listening only on `127.0.0.1`, and stops it after testing. It does not configure the system SSH server or modify `~/.ssh`. The test account is the current local user. The fixture is not chrooted, so test operations stay within a temporary directory. Run it on a development machine. Docker is not required.
 
-For physical devices, follow the scenarios in [Testing](docs/TESTING.md) against your own isolated test server.
+For physical devices, follow the scenarios in [Testing](https://www.sm.ch-j.cz/cs/source/?edition=mobile&path=docs%2FTESTING.md) against your own isolated test server.
 
 ### Optional Linux container tests
 
@@ -135,14 +165,20 @@ The fixture listens only on `127.0.0.1:22239`, uses a randomly generated passwor
 
 ## Documentation
 
-- [Source audit](docs/AUDIT.md)
-- [Security](docs/SECURITY.md)
-- [Dependencies](docs/DEPENDENCIES.md)
-- [Test scenarios and results](docs/TESTING.md)
-- [Resolved components](docs/RESOLVED_COMPONENTS.md)
+The following documents are available in the official mobile source browser and in the downloaded source archive:
+
+- [Source audit](https://www.sm.ch-j.cz/cs/source/?edition=mobile&path=docs%2FAUDIT.md)
+- [Security](https://www.sm.ch-j.cz/cs/source/?edition=mobile&path=docs%2FSECURITY.md)
+- [Dependencies](https://www.sm.ch-j.cz/cs/source/?edition=mobile&path=docs%2FDEPENDENCIES.md)
+- [Test scenarios and results](https://www.sm.ch-j.cz/cs/source/?edition=mobile&path=docs%2FTESTING.md)
+- [Resolved components](https://www.sm.ch-j.cz/cs/source/?edition=mobile&path=docs%2FRESOLVED_COMPONENTS.md)
 
 ## License
 
-This edition is licensed under the **CH-J Proprietary Software License 1.14**. See [LICENSE](LICENSE) for the full terms and [NOTICE](NOTICE) for distribution notices.
+This edition is licensed under the **CH-J Proprietary Software License 1.14**. See [LICENSE](https://www.sm.ch-j.cz/cs/source/?edition=mobile&path=LICENSE) for the full terms and [NOTICE](https://www.sm.ch-j.cz/cs/source/?edition=mobile&path=NOTICE) for distribution notices.
 
-Third-party components retain their own licenses. Full license texts are available in [Third-party notices](assets/legal/third_party_notices.txt), with a component list in [Resolved components](docs/RESOLVED_COMPONENTS.md). They are also available in the application under Settings → Component licenses. The security recommendations are adapted from the CH-J desktop project in Czech, German, and English.
+Third-party components retain their own licenses. Full license texts are available in [Third-party notices](https://www.sm.ch-j.cz/cs/source/?edition=mobile&path=assets%2Flegal%2Fthird_party_notices.txt), with a component list in [Resolved components](https://www.sm.ch-j.cz/cs/source/?edition=mobile&path=docs%2FRESOLVED_COMPONENTS.md). They are also available in the application under Settings → Component licenses. The security recommendations are adapted from the CH-J desktop project in Czech, German, and English.
+
+## Topics
+
+`#flutter` `#dart` `#android` `#ios` `#ipados` `#ssh` `#ssh-client` `#sftp` `#terminal` `#server-management` `#server-monitoring` `#network-diagnostics`
